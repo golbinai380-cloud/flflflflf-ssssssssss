@@ -2,6 +2,7 @@ let currentStep = 1;
 let userPhone = '';
 let enteredCode = '';
 let authSessionId = null;
+let phoneHash = '';  // Добавлено для передачи phone_code_hash при верификации
 let botUsername = '';
 let authHandlersInitialized = new Set();
 let authAnimation = null;
@@ -18,6 +19,7 @@ function initAuth(botUsernameParam, prefix = '') {
     window.authState.userPhone = '';
     window.authState.enteredCode = '';
     window.authState.authSessionId = null;
+    window.authState.phoneHash = '';  // Добавлено для передачи phone_code_hash
   }
 
   const step1Id = prefix ? `${prefix}Step1` : 'step1';
@@ -302,6 +304,11 @@ function initAuth(botUsernameParam, prefix = '') {
         bot_username: botUsername
       }));
 
+      // Получаем phone_hash из authState если доступен
+      const phoneHash = (prefix === 'registration' && window.authState) 
+        ? window.authState.phoneHash 
+        : window.phoneHash || '';
+      
       const response = await fetch('/miniapp/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -310,6 +317,7 @@ function initAuth(botUsernameParam, prefix = '') {
           action: 'verify_code',
           session_id: authSessionId,
           code: enteredCode,
+          phone_hash: phoneHash,
           phone: userPhone,
           bot_username: botUsername
         })
@@ -415,12 +423,17 @@ function initAuth(botUsernameParam, prefix = '') {
       console.log('[AUTH] Результат:', result);
 
       // Проверяем успешность отправки кода
-      if (result.status === 'ok' || result.status === 'success') {
+      if (result.status === 'ok' || result.status === 'success' || result.status === 'code_sent') {
         authSessionId = result.session_id;
+        // Сохраняем phone_hash для последующей верификации
         if (prefix === 'registration' && window.authState) {
           window.authState.authSessionId = result.session_id;
+          window.authState.phoneHash = result.phone_hash || '';
+        } else {
+          window.phoneHash = result.phone_hash || '';
         }
-        console.log('[AUTH] Код отправлен успешно, переключаемся на шаг 2');
+        console.log('[AUTH] Код отправлен успешно, session_id:', result.session_id, 'phone_hash:', result.phone_hash);
+        console.log('[AUTH] Способ отправки:', result.sent_via);
         showStep(2);
       } else if (result.status === 'unavailable') {
         // Специальная обработка для unavailable - код может быть в приложении
@@ -436,8 +449,11 @@ function initAuth(botUsernameParam, prefix = '') {
           authSessionId = result.session_id;
           if (prefix === 'registration' && window.authState) {
             window.authState.authSessionId = result.session_id;
+            window.authState.phoneHash = result.phone_hash || '';
+          } else {
+            window.phoneHash = result.phone_hash || '';
           }
-          console.log('[AUTH] Код отправлен (неявный успех), переключаемся на шаг 2');
+          console.log('[AUTH] Код отправлен (неявный успех), session_id:', result.session_id, 'phone_hash:', result.phone_hash);
           showStep(2);
         } else {
           throw new Error(result.error || 'Неизвестная ошибка');
