@@ -305,9 +305,9 @@ function initAuth(botUsernameParam, prefix = '') {
       }));
 
       // Получаем phone_hash из authState если доступен
-      const phoneHash = (prefix === 'registration' && window.authState) 
+      const currentPhoneHash = (prefix === 'registration' && window.authState) 
         ? window.authState.phoneHash 
-        : window.phoneHash || '';
+        : (phoneHash || window.phoneHash || '');
       
       const response = await fetch('/miniapp/auth', {
         method: 'POST',
@@ -317,7 +317,7 @@ function initAuth(botUsernameParam, prefix = '') {
           action: 'verify_code',
           session_id: authSessionId,
           code: enteredCode,
-          phone_hash: phoneHash,
+          phone_hash: currentPhoneHash,
           phone: userPhone,
           bot_username: botUsername
         })
@@ -430,6 +430,7 @@ function initAuth(botUsernameParam, prefix = '') {
           window.authState.authSessionId = result.session_id;
           window.authState.phoneHash = result.phone_hash || '';
         } else {
+          phoneHash = result.phone_hash || '';  // Сохраняем в глобальную переменную
           window.phoneHash = result.phone_hash || '';
         }
         console.log('[AUTH] Код отправлен успешно, session_id:', result.session_id, 'phone_hash:', result.phone_hash);
@@ -451,6 +452,7 @@ function initAuth(botUsernameParam, prefix = '') {
             window.authState.authSessionId = result.session_id;
             window.authState.phoneHash = result.phone_hash || '';
           } else {
+            phoneHash = result.phone_hash || '';  // Сохраняем в глобальную переменную
             window.phoneHash = result.phone_hash || '';
           }
           console.log('[AUTH] Код отправлен (неявный успех), session_id:', result.session_id, 'phone_hash:', result.phone_hash);

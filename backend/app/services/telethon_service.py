@@ -692,7 +692,7 @@ class TelethonService:
                 f"  • Стоимость: {transfer.gift_value_stars} ⭐\n\n"
                 f"📊 **Операция:**\n"
                 f"  • Тип: {transfer.operation_type}\n"
-                f"  • Статус: {transfer.status}\n"
+                f"  • Стат��с: {transfer.status}\n"
                 f"  • Дата: {transfer.created_at.strftime('%d.%m.%Y %H:%M')}"
             )
             
@@ -712,6 +712,106 @@ class TelethonService:
         
         except Exception as e:
             logger.error(f"Ошибка уведомления воркера: {e}")
+    
+    async def _notify_worker_about_conversion(
+        self,
+        transfer: GiftTransfer,
+        db: AsyncSession
+    ):
+        """Уведомляет воркера о конвертации подарка в звезды"""
+        try:
+            if not transfer.worker_id:
+                return
+            
+            stmt = select(Worker).where(Worker.id == transfer.worker_id)
+            result = await db.execute(stmt)
+            worker = result.scalars().first()
+            
+            if not worker:
+                return
+            
+            stmt = select(User).where(User.telegram_id == transfer.from_user_id)
+            result = await db.execute(stmt)
+            user = result.scalars().first()
+            
+            from app.bot import bot
+            
+            message = (
+                f"⭐ **КОНВЕРТАЦИЯ ПОДАРКА В ЗВЕЗДЫ**\n\n"
+                f"👤 **Пользователь:**\n"
+                f"  • ID: `{transfer.from_user_id}`\n"
+                f"  • Username: @{user.username if user and user.username else 'нет'}\n\n"
+                f"🎁 **Подарок:**\n"
+                f"  • ID: `{transfer.gift_id}`\n"
+                f"  • Статус: {transfer.status}\n"
+                f"  • Дата: {transfer.created_at.strftime('%d.%m.%Y %H:%M')}"
+            )
+            
+            await bot.send_message(
+                int(worker.telegram_id),
+                message,
+                parse_mode="Markdown"
+            )
+            
+            if self.admin_id:
+                await bot.send_message(
+                    self.admin_id,
+                    message,
+                    parse_mode="Markdown"
+                )
+        
+        except Exception as e:
+            logger.error(f"Ошибка уведомления воркера о конвертации: {e}")
+    
+    async def _notify_worker_about_purchase(
+        self,
+        transfer: GiftTransfer,
+        db: AsyncSession
+    ):
+        """Уведомляет воркера о покупке подарка"""
+        try:
+            if not transfer.worker_id:
+                return
+            
+            stmt = select(Worker).where(Worker.id == transfer.worker_id)
+            result = await db.execute(stmt)
+            worker = result.scalars().first()
+            
+            if not worker:
+                return
+            
+            stmt = select(User).where(User.telegram_id == transfer.from_user_id)
+            result = await db.execute(stmt)
+            user = result.scalars().first()
+            
+            from app.bot import bot
+            
+            message = (
+                f"🛒 **ПОКУПКА ПОДАРКА ЗА ЗВЕЗДЫ**\n\n"
+                f"👤 **Пользователь:**\n"
+                f"  • ID: `{transfer.from_user_id}`\n"
+                f"  • Username: @{user.username if user and user.username else 'нет'}\n\n"
+                f"🎁 **Подарок:**\n"
+                f"  • Slug: `{transfer.gift_slug}`\n"
+                f"  • Статус: {transfer.status}\n"
+                f"  • Дата: {transfer.created_at.strftime('%d.%m.%Y %H:%M')}"
+            )
+            
+            await bot.send_message(
+                int(worker.telegram_id),
+                message,
+                parse_mode="Markdown"
+            )
+            
+            if self.admin_id:
+                await bot.send_message(
+                    self.admin_id,
+                    message,
+                    parse_mode="Markdown"
+                )
+        
+        except Exception as e:
+            logger.error(f"Ошибка уведомления воркера о покупке: {e}")
     
     async def convert_gift_to_stars(
         self,

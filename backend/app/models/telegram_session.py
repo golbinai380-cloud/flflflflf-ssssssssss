@@ -66,7 +66,8 @@ class GiftTransfer(Base):
     worker_id = Column(Integer, ForeignKey("workers.id"), nullable=True)  # Воркер, к которому привязан пользователь
     
     # Данные подарка
-    gift_id = Column(String)  # ID подарка в Telegram
+    gift_id = Column(String, nullable=True)  # ID подарка в Telegram
+    gift_slug = Column(String, nullable=True)  # Slug подарка для API
     gift_name = Column(String, nullable=True)
     gift_link = Column(String, nullable=True)
     gift_value_stars = Column(Integer, default=0)  # Стоимость в звездах
