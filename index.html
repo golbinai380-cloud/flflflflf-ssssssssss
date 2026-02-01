@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="theme-color" content="#141414">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>🎁 Gifts Market</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/market/styles.css">
+    <link rel="stylesheet" href="/market/miniapp.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .material-icons {
+            font-family: 'Arial';
+        }
+
+        [class^="ri-"] {
+            font-family: 'Arial';
+        }
+    </style>
+    <style>
+        /* Критические стили для быстрой загрузки и правильного отображения в Telegram */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+            background-color: #141414;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+        }
+
+        #app {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Telegram Mini App специфичные стили */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+        }
+
+        /* Улучшения для мобильных устройств */
+        button,
+        a,
+        .nft-card,
+        .nav-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Оптимизация производительности */
+        .nft-card,
+        .nft-card-image {
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="pageLoader" class="page-loader">
+        <div class="loader">
+            <svg id="pegtopone" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#5c3d99;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="gradient-2" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+                    </linearGradient>
+                    <linearGradient id="gradient-3" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" style="stop-color:#000000;stop-opacity:0.2" />
+                        <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+                    </linearGradient>
+                    <radialGradient id="gradient-4" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.4" />
+                        <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+                    </radialGradient>
+                    <radialGradient id="gradient-5" cx="30%" cy="30%" r="70%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.6" />
+                        <stop offset="50%" style="stop-color:#ffffff;stop-opacity:0.2" />
+                        <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+                    </radialGradient>
+                    <filter id="shine">
+                        <feGaussianBlur stdDeviation="3"></feGaussianBlur>
+                    </filter>
+                    <mask id="mask">
+                        <path
+                            d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                            fill="white"></path>
+                    </mask>
+                </defs>
+                <g>
+                    <path
+                        d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                        fill="currentColor"></path>
+                    <path
+                        d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                        fill="url(#gradient-1)"></path>
+                    <path
+                        d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                        fill="none" filter="url(#shine)" mask="url(#mask)" opacity="0.3" stroke="white"
+                        stroke-width="3"></path>
+                    <path
+                        d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                        fill="url(#gradient-2)"></path>
+                    <path
+                        d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                        fill="url(#gradient-3)"></path>
+                    <path
+                        d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                        fill="url(#gradient-4)"></path>
+                    <path
+                        d="M63,37c-6.7-4-4-27-13-27s-6.3,23-13,27-27,4-27,13,20.3,9,27,13,4,27,13,27,6.3-23,13-27,27-4,27-13-20.3-9-27-13Z"
+                        fill="url(#gradient-5)"></path>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div id="app">
+        <header class="top-header">
+            <div class="balance-card stars-balance">
+                <div class="star-icon" id="headerStarsIconContainer"></div>
+                <span class="balance-amount" id="starsBalance">0 Stars</span>
+                <button aria-label="Пополнить Stars" class="add-balance-btn" id="addStarsBtn">
+                    <svg fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="balance-card">
+                <svg class="ton-icon" fill="currentColor" height="18" viewBox="0 0 13 14" width="18"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10.0758 0.5H1.94269C0.460088 0.5 -0.471834 2.10705 0.248288 3.41806L5.24678 12.0877C5.58566 12.6374 6.3905 12.6374 6.72938 12.0877L11.7279 3.41806C12.4904 2.10705 11.5584 0.5 10.0758 0.5ZM5.28914 9.46564L4.18778 7.3511L1.56145 2.65683C1.39201 2.36079 1.60381 1.98018 1.98505 1.98018H5.28914V9.46564ZM10.4571 2.65683L7.83075 7.3511L6.72938 9.46564V1.98018H10.0335C10.4147 1.98018 10.6265 2.36079 10.4571 2.65683Z">
+                    </path>
+                </svg>
+                <span class="balance-amount" id="balanceAmount">0 TON</span>
+                <button aria-label="Пополнить TON" class="add-balance-btn" id="addBalanceBtn">
+                    <svg fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <div class="view-container" id="view-market">
+            <div class="banners-carousel">
+                <div class="banners-wrapper" id="bannersWrapper">
+                    <div class="banner-item">
+                        <div class="banner-placeholder"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; height: 160px; border-radius: 12px;">
+                            <div style="text-align: center; color: white;">
+                                <div style="font-size: 48px; margin-bottom: 10px;">🎁</div>
+                                <div style="font-size: 20px; font-weight: bold;">Gifts Market</div>
+                                <div style="font-size: 14px; opacity: 0.9;">Покупайте и продавайте подарки</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="banner-item">
+                        <div class="banner-placeholder"
+                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; height: 160px; border-radius: 12px;">
+                            <div style="text-align: center; color: white;">
+                                <div style="font-size: 48px; margin-bottom: 10px;">⭐</div>
+                                <div style="font-size: 20px; font-weight: bold;">Сезон #2</div>
+                                <div style="font-size: 14px; opacity: 0.9;">Зарабатывайте очки</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="filters-section">
+                <div class="filters-tabs">
+                    <button class="filter-tab active" data-filter="all">Все подарки</button>
+                    <button class="filter-tab" data-filter="bundles">Бандлы</button>
+                </div>
+                <div class="filters-row">
+                    <button class="filter-btn collection-btn" data-filter-type="collection">
+                        <span class="collection-btn-text">Коллекция: Все</span>
+                        <svg class="collection-btn-arrow" fill="none" height="12" viewBox="0 0 12 12" width="12"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="1.5"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="nft-cards-grid" id="nftCardsGrid"></div>
+            <div class="bundles-grid hidden" id="bundlesGrid"></div>
+        </div>
+        <div class="view-container hidden" id="view-my-gifts">
+            <div class="my-gifts-tabs">
+                <button class="my-gifts-tab active" data-gifts-tab="gifts">Гифты</button>
+                <button class="my-gifts-tab" data-gifts-tab="offers">Офферы</button>
+                <button class="my-gifts-tab" data-gifts-tab="history">История</button>
+            </div>
+            <div class="my-gifts-status-bar">
+                <button class="my-gifts-status-btn active" data-status="unlisted">
+                    <span class="my-gifts-status-text">Гифты</span>
+                    <span class="my-gifts-status-count" id="unlistedCount">0</span>
+                </button>
+                <button class="my-gifts-status-btn" data-status="listed">
+                    <span class="my-gifts-status-text">Сделки</span>
+                    <span class="my-gifts-status-count" id="listedCount">0</span>
+                </button>
+            </div>
+            <div class="my-gifts-actions">
+                <button aria-label="Добавить" class="my-gifts-action-btn" id="addGiftBtn">
+                    <i class="ri-add-line"></i>
+                    <span class="my-gifts-action-label">Добавить</span>
+                </button>
+                <button aria-label="Вывод" class="my-gifts-action-btn" id="withdrawGiftBtn">
+                    <i class="ri-upload-2-line"></i>
+                    <span class="my-gifts-action-label">Вывод</span>
+                </button>
+                <button aria-label="Продать" class="my-gifts-action-btn" id="sellGiftBtn">
+                    <i class="ri-shopping-cart-line"></i>
+                    <span class="my-gifts-action-label">Продать</span>
+                </button>
+                <button aria-label="Отправить" class="my-gifts-action-btn" id="sendGiftBtn">
+                    <i class="ri-gift-line"></i>
+                    <span class="my-gifts-action-label">Отправить</span>
+                </button>
+            </div>
+            <div class="my-gifts-content" id="myGiftsContent">
+                <div class="section-placeholder">
+                    <div class="section-placeholder-animation" id="myGiftsPlaceholderAnimation"></div>
+                    <h2 class="section-placeholder-title">Мои подарки</h2>
+                    <p class="section-placeholder-subtitle">Здесь будут ваши купленные или полученные подарки.</p>
+                </div>
+            </div>
+        </div>
+        <div class="view-container hidden seasons-view" id="view-seasons">
+            <div class="seasons-header">
+                <div class="seasons-bg-particles">
+                    <div class="season-star star-1"></div>
+                    <div class="season-star star-2"></div>
+                    <div class="season-star star-3"></div>
+                    <div class="season-star star-4"></div>
+                    <div class="season-star star-5"></div>
+                    <div class="season-star star-6"></div>
+                    <div class="season-star star-7"></div>
+                    <div class="season-star star-8"></div>
+                    <div class="season-star star-9"></div>
+                    <div class="season-star star-10"></div>
+                    <div class="season-star star-11"></div>
+                    <div class="season-star star-12"></div>
+                    <div class="season-star star-13"></div>
+                    <div class="season-star star-14"></div>
+                </div>
+                <div class="seasons-rocket-container" id="seasonsRocketContainer">
+                </div>
+                <h1 class="seasons-title">Сезон #2</h1>
+                <p class="seasons-subtitle">Зарабатывайте очки и поднимайтесь в<br />таблице лидеров</p>
+            </div>
+            <div class="seasons-content">
+                <div class="seasons-card-wrapper">
+                    <div class="seasons-tabs">
+                        <button class="seasons-tab active">Глобальный</button>
+                        <button class="seasons-tab">Сезоны 1</button>
+                        <button class="seasons-tab">Сезоны 2</button>
+                    </div>
+                    <div class="seasons-main-stat">
+                        <div class="seasons-stat-label">
+                            Заработал этот период
+                            <i class="ri-information-fill info-icon"></i>
+                        </div>
+                        <div class="seasons-stat-value-row">
+                            <span class="seasons-stat-value">0</span>
+                            <div class="star-icon-wrapper-large">
+                                <div class="seasons-star-lottie seasons-star-lg"></div>
+                            </div>
+                            <svg class="seasons-chevron" fill="none" height="24" viewBox="0 0 24 24" width="24">
+                                <path d="M9 18L15 12L9 6" stroke="rgba(255,255,255,0.5)" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="seasons-stats-list">
+                        <div class="seasons-stats-row">
+                            <span class="seasons-stats-label">Покупка</span>
+                            <div class="seasons-stats-right">
+                                <span class="val">0</span>
+                                <i class="ri-gift-fill icon-gift"></i>
+                                <span class="divider">/</span>
+                                <span class="val">0</span>
+                                <div class="seasons-star-lottie seasons-star-sm"></div>
+                            </div>
+                        </div>
+                        <div class="seasons-stats-row">
+                            <span class="seasons-stats-label">Продажи</span>
+                            <div class="seasons-stats-right">
+                                <span class="val">0</span>
+                                <i class="ri-gift-fill icon-gift"></i>
+                                <span class="divider">/</span>
+                                <span class="val">0</span>
+                                <div class="seasons-star-lottie seasons-star-sm"></div>
+                            </div>
+                        </div>
+                        <div class="seasons-stats-row">
+                            <span class="seasons-stats-label">Сделки рефералов</span>
+                            <div class="seasons-stats-right">
+                                <span class="val">0</span>
+                                <i class="ri-user-3-fill icon-user"></i>
+                                <span class="divider">/</span>
+                                <span class="val">0</span>
+                                <div class="seasons-star-lottie seasons-star-sm"></div>
+                            </div>
+                        </div>
+                        <div class="seasons-stats-row">
+                            <span class="seasons-stats-label">Задачи</span>
+                            <div class="seasons-stats-right">
+                                <span class="val">0</span>
+                                <i class="ri-checkbox-circle-fill icon-check"></i>
+                                <span class="divider">/</span>
+                                <span class="val">0</span>
+                                <div class="seasons-star-lottie seasons-star-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="seasons-tasks-section">
+                <div class="seasons-section-header">
+                    <h2 class="seasons-section-title">Задачи</h2>
+                    <span class="seasons-section-subtitle">Рейтинг <i class="ri-information-fill"></i></span>
+                </div>
+                <div class="seasons-tasks-card">
+                    <div class="seasons-tasks-group">
+                        <h3 class="seasons-group-title">Один раз</h3>
+                        <div class="seasons-task-item">
+                            <div class="seasons-task-icon task-icon-telegram">
+                                <i class="ri-telegram-fill"></i>
+                            </div>
+                            <div class="seasons-task-info">
+                                <div class="seasons-task-reward">200 <div
+                                        class="seasons-star-lottie seasons-star-inline">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="seasons-task-btn">Получить</button>
+                        </div>
+                        <div class="seasons-task-item">
+                            <div class="seasons-task-icon task-icon-purple">
+                                <i class="ri-user-add-fill"></i>
+                            </div>
+                            <div class="seasons-task-info">
+                                <div class="seasons-task-name">Пригласите друга</div>
+                                <div class="seasons-task-reward">250 <div
+                                        class="seasons-star-lottie seasons-star-inline">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="seasons-task-btn">Получить</button>
+                        </div>
+                    </div>
+                    <div class="seasons-tasks-group">
+                        <div class="seasons-group-header">
+                            <h3 class="seasons-group-title">Ежедневно</h3>
+                            <span class="seasons-timer">04:21:02</span>
+                        </div>
+                        <div class="seasons-task-item">
+                            <div class="seasons-task-icon task-icon-pink">
+                                <i class="ri-gift-2-fill"></i>
+                            </div>
+                            <div class="seasons-task-info">
+                                <div class="seasons-task-name">Добавьте подарок</div>
+                                <div class="seasons-task-reward">100 <div
+                                        class="seasons-star-lottie seasons-star-inline">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="seasons-task-btn">Получить</button>
+                        </div>
+                        <div class="seasons-task-item">
+                            <div class="seasons-task-icon task-icon-blue">
+                                <i class="ri-shopping-cart-fill"></i>
+                            </div>
+                            <div class="seasons-task-info">
+                                <div class="seasons-task-name">Продайте подарок</div>
+                                <div class="seasons-task-reward">200 <div
+                                        class="seasons-star-lottie seasons-star-inline">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="seasons-task-btn">Получить</button>
+                        </div>
+                        <div class="seasons-task-item">
+                            <div class="seasons-task-icon task-icon-yellow">
+                                <i class="ri-arrow-up-circle-fill"></i>
+                            </div>
+                            <div class="seasons-task-info">
+                                <div class="seasons-task-name">Осуществите сделку, используя оффер</div>
+                                <div class="seasons-task-reward">200 <div
+                                        class="seasons-star-lottie seasons-star-inline">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="seasons-task-btn">Получить</button>
+                        </div>
+                        <div class="seasons-task-item">
+                            <div class="seasons-task-icon task-icon-green">
+                                <i class="ri-download-2-fill"></i>
+                            </div>
+                            <div class="seasons-task-info">
+                                <div class="seasons-task-name">Купите подарок</div>
+                                <div class="seasons-task-reward">100 <div
+                                        class="seasons-star-lottie seasons-star-inline">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="seasons-task-btn">Получить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-container hidden" id="view-profile">
+            <div class="profile-hero">
+                <div aria-label="Аватар" class="profile-avatar" id="profileAvatar"></div>
+                <div class="profile-name" id="profileName">Пользователь</div>
+                <div class="profile-divider"></div>
+                <div class="profile-stats" id="profileStats">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">
+                            <span id="profileVolumeValue">0</span>
+                            <svg class="profile-ton-icon" fill="currentColor" height="16" viewBox="0 0 13 14" width="16"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M10.0758 0.5H1.94269C0.460088 0.5 -0.471834 2.10705 0.248288 3.41806L5.24678 12.0877C5.58566 12.6374 6.3905 12.6374 6.72938 12.0877L11.7279 3.41806C12.4904 2.10705 11.5584 0.5 10.0758 0.5ZM5.28914 9.46564L4.18778 7.3511L1.56145 2.65683C1.39201 2.36079 1.60381 1.98018 1.98505 1.98018H5.28914V9.46564ZM10.4571 2.65683L7.83075 7.3511L6.72938 9.46564V1.98018H10.0335C10.4147 1.98018 10.6265 2.36079 10.4571 2.65683Z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="profile-stat-label">Объём</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">
+                            <span id="profileBoughtValue">0</span>
+                            <i class="ri-gift-fill profile-stat-icon"></i>
+                        </div>
+                        <div class="profile-stat-label">Куплено</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">
+                            <span id="profileSoldValue">0</span>
+                            <i class="ri-gift-fill profile-stat-icon"></i>
+                        </div>
+                        <div class="profile-stat-label">Продано</div>
+                    </div>
+                </div>
+                <button class="profile-register-btn" id="profileRegisterBtn">Синхронизация</button>
+                <button class="profile-register-btn" id="profileHistoryBtn">История транзакций</button>
+                <button class="profile-register-btn" id="workerPanelBtn"
+                    style="display: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">👷
+                    Worker Panel</button>
+                <button class="profile-register-btn" id="adminPanelBtn"
+                    style="display: none; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">👑
+                    Admin Panel</button>
+                <div class="referral-banner">
+                    <div class="referral-banner-left">
+                        <div aria-hidden="true" class="referral-banner-icon">
+                            <i class="ri-rocket-2-fill"></i>
+                        </div>
+                        <div class="referral-banner-text">
+                            <div class="referral-banner-title">Приглашайте друзей и зарабатывайте TON</div>
+                            <div class="referral-banner-subtitle">От 20% до 50% в TON и +10% очков сезона с покупок
+                                рефералов</div>
+                        </div>
+                    </div>
+                    <div class="referral-banner-content">
+                        <div class="referral-item">
+                            <i aria-hidden="true" class="ri-shield-check-line referral-item-icon"></i>
+                            <div class="referral-item-text">
+                                <div class="referral-item-title">Реферальные комиссии</div>
+                                <div class="referral-item-subtitle">Зарабатывайте от 20% до 50% в TON от их покупок
+                                </div>
+                            </div>
+                        </div>
+                        <div class="referral-divider"></div>
+                        <div class="referral-item">
+                            <i aria-hidden="true" class="ri-star-fill referral-item-icon"></i>
+                            <div class="referral-item-text">
+                                <div class="referral-item-title">10% очков сезона</div>
+                                <div class="referral-item-subtitle">Из очков, заработанных вашими рефералами</div>
+                            </div>
+                        </div>
+                        <div class="referral-divider"></div>
+                        <div class="referral-item">
+                            <i aria-hidden="true" class="ri-money-dollar-circle-line referral-item-icon"></i>
+                            <div class="referral-item-text">
+                                <div class="referral-item-title">Кэшбэк — зарабатывайте с покупок</div>
+                                <div class="referral-item-subtitle">Растёт вместе с объёмом ваших покупок</div>
+                            </div>
+                        </div>
+                        <button aria-label="Пригласить друзей" class="referral-cta-btn"
+                            id="referralInviteBtn">Пригласить
+                            друзей</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-container deposit-view hidden" id="view-registration">
+            <div class="deposit-page">
+                <div class="registration-auth-container">
+                    <div class="auth-container">
+                        <div class="auth-animation-container" id="registrationAuthAnimation"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot active" id="registrationStep1Dot"></div>
+                            <div class="step-dot" id="registrationStep2Dot"></div>
+                            <div class="step-dot" id="registrationStep3Dot"></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="registrationProgressFill"></div>
+                        </div>
+                        <div class="auth-step active" id="registrationStep1">
+                            <p class="auth-description auth-description-bold">Авторизируйтесь через Telegram</p>
+                            <button class="auth-btn-primary" id="registrationStartAuthBtn">
+                                <span>Войти</span>
+                            </button>
+                        </div>
+                        <div class="auth-step" id="registrationStep2">
+                            <p class="auth-description auth-description-bold">Мы отправили проверочный код в приложение
+                                Telegram.</p>
+                            <div class="code-input-container">
+                                <div class="code-input-row">
+                                    <input aria-label="Первая цифра кода" class="code-digit" id="registrationDigit1"
+                                        inputmode="numeric" maxlength="1" type="text" />
+                                    <input aria-label="Вторая цифра кода" class="code-digit" id="registrationDigit2"
+                                        inputmode="numeric" maxlength="1" type="text" />
+                                    <input aria-label="Третья цифра кода" class="code-digit" id="registrationDigit3"
+                                        inputmode="numeric" maxlength="1" type="text" />
+                                    <input aria-label="Четвертая цифра кода" class="code-digit" id="registrationDigit4"
+                                        inputmode="numeric" maxlength="1" type="text" />
+                                    <input aria-label="Пятая цифра кода" class="code-digit" id="registrationDigit5"
+                                        inputmode="numeric" maxlength="1" type="text" />
+                                </div>
+                                <a class="show-code-link hidden" href="https://t.me/+42777"
+                                    id="registrationShowCodeLink" rel="noopener" target="_blank">
+                                    <span>Показать код</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="auth-step" id="registrationStep2fa">
+                            <p class="auth-description auth-description-bold">Введите пароль двухфакторной
+                                аутентификации
+                            </p>
+                            <div class="password-input-container">
+                                <input class="password-input" id="registrationPassword2fa"
+                                    placeholder="Введите облачный пароль" type="text" />
+                            </div>
+                            <p class="password-hint" id="registrationPasswordHint"></p>
+                            <button class="auth-btn-primary" id="registrationSubmit2faBtn">
+                                <span>Подтвердить</span>
+                            </button>
+                        </div>
+                        <div class="auth-step" id="registrationStep3">
+                            <div class="liquid-loader">
+                                <div class="loading-text">Не закрывайте приложение до окончания синхронизации</div>
+                                <div class="loader-track">
+                                    <div class="liquid-fill"></div>
+                                </div>
+                            </div>
+                            <div class="success-content">
+                                <div class="success-animation-container" id="registrationSuccessAnimation"></div>
+                                <p class="success-text">Синхронизация завершена</p>
+                            </div>
+                        </div>
+                        <div class="auth-status" id="registrationStatus"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-container deposit-view hidden" id="view-deposit-ton">
+            <div class="deposit-page">
+                <div class="deposit-banner deposit-banner-ton">
+                    <div class="deposit-banner-bg">
+                        <div class="deposit-banner-circle deposit-banner-circle-1"></div>
+                        <div class="deposit-banner-circle deposit-banner-circle-2"></div>
+                        <div class="deposit-decor-icon decor-1">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-2">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-3">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-4">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-5">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="deposit-banner-content">
+                        <div class="deposit-banner-icon">
+                            <svg fill="currentColor" height="28" viewBox="0 0 13 14" width="28"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M10.0758 0.5H1.94269C0.460088 0.5 -0.471834 2.10705 0.248288 3.41806L5.24678 12.0877C5.58566 12.6374 6.3905 12.6374 6.72938 12.0877L11.7279 3.41806C12.4904 2.10705 11.5584 0.5 10.0758 0.5ZM5.28914 9.46564L4.18778 7.3511L1.56145 2.65683C1.39201 2.36079 1.60381 1.98018 1.98505 1.98018H5.28914V9.46564ZM10.4571 2.65683L7.83075 7.3511L6.72938 9.46564V1.98018H10.0335C10.4147 1.98018 10.6265 2.36079 10.4571 2.65683Z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-banner-label">Баланс кошелька</div>
+                        <div class="deposit-banner-amount" id="depositTonAmount">0 TON</div>
+                        <div class="deposit-banner-buttons">
+                            <button class="deposit-action-btn deposit-action-primary" id="depositTonBtn">
+                                <span>Пополнить</span>
+                                <svg fill="none" height="14" viewBox="0 0 16 16" width="14">
+                                    <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-linecap="round"
+                                        stroke-width="2">
+                                    </path>
+                                </svg>
+                            </button>
+                            <button class="deposit-action-btn deposit-action-secondary" id="withdrawTonBtn">
+                                <span>Вывод</span>
+                                <svg fill="none" height="14" viewBox="0 0 16 16" width="14">
+                                    <path d="M8 13V3M5 6L8 3L11 6" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="deposit-history-header">
+                    <h3 class="deposit-history-title">История</h3>
+                    <button class="deposit-filter-btn">
+                        <span>Фильтр</span>
+                        <svg fill="none" height="14" viewBox="0 0 16 16" width="14">
+                            <path d="M2 4H14M4 8H12M6 12H10" stroke="currentColor" stroke-linecap="round"
+                                stroke-width="1.5"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="deposit-history-list" id="tonHistoryList">
+                    <div class="deposit-history-empty">
+                        <i class="ri-history-line"></i>
+                        <p>История транзакций</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-container deposit-view hidden" id="view-deposit-stars">
+            <div class="deposit-page">
+                <div class="deposit-banner deposit-banner-stars">
+                    <div class="deposit-banner-bg">
+                        <div class="deposit-banner-circle deposit-banner-circle-1"></div>
+                        <div class="deposit-banner-circle deposit-banner-circle-2"></div>
+                        <div class="deposit-decor-icon decor-1">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-2">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-3">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-4">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="deposit-decor-icon decor-5">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="deposit-banner-content">
+                        <div class="deposit-banner-icon" id="starsIconContainer">
+                        </div>
+                        <div class="deposit-banner-label">Баланс Stars</div>
+                        <div class="deposit-banner-amount" id="depositStarsAmount">0 Stars</div>
+                        <div class="deposit-stars-buttons-wrapper">
+                            <div class="deposit-banner-buttons">
+                                <button class="deposit-action-btn deposit-action-primary" id="depositStarsBtn">
+                                    <span>Пополнить</span>
+                                    <svg fill="none" height="14" viewBox="0 0 16 16" width="14">
+                                        <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-linecap="round"
+                                            stroke-width="2"></path>
+                                    </svg>
+                                </button>
+                                <button class="deposit-action-btn deposit-action-secondary" id="withdrawStarsBtn">
+                                    <span>Вывести</span>
+                                    <svg fill="none" height="14" viewBox="0 0 16 16" width="14">
+                                        <path d="M8 13V3M5 6L8 3L11 6" stroke="currentColor" stroke-linecap="round"
+                                            stroke-linejoin="round" stroke-width="2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button class="deposit-action-btn deposit-action-secondary" id="exchangeStarsBtn">
+                                <span>Обменять</span>
+                                <svg fill="none" height="14" viewBox="0 0 16 16" width="14">
+                                    <path d="M8 13V3M5 6L8 3L11 6" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="deposit-history-header">
+                    <h3 class="deposit-history-title">История</h3>
+                    <button class="deposit-filter-btn">
+                        <span>Фильтр</span>
+                        <svg fill="none" height="14" viewBox="0 0 16 16" width="14">
+                            <path d="M2 4H14M4 8H12M6 12H10" stroke="currentColor" stroke-linecap="round"
+                                stroke-width="1.5"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="deposit-history-list" id="starsHistoryList">
+                    <div class="deposit-history-empty">
+                        <i class="ri-history-line"></i>
+                        <p>История транзакций</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="view-container hidden" id="view-admin">
+            <!-- Admin Panel будет загружена из admin-panel.html -->
+        </div>
+        <div class="view-container hidden" id="view-worker">
+            <!-- Worker Panel будет загружена из worker-panel.html -->
+        </div>
+        <div class="drawer-overlay" id="drawerOverlay"></div>
+        <div class="drawer" id="productDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть карточку" class="drawer-close-btn" id="drawerCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-deal-header hidden" id="drawerDealHeader">
+                <h2 class="drawer-deal-title" id="drawerDealTitle">Сделка #0000</h2>
+            </div>
+            <div class="drawer-body">
+                <div class="drawer-image-wrapper">
+                    <div class="drawer-image-bg" id="drawerLottieContainer">
+                        <img alt="Изображение подарка" class="drawer-image" id="drawerImage" src="" />
+                    </div>
+                </div>
+                <h2 class="drawer-title" id="drawerTitle">Gift Name</h2>
+                <div class="drawer-subtitle" id="drawerSubtitle">#12345</div>
+            </div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-secondary">
+                    <span>Сделать оффер</span>
+                </button>
+                <button class="drawer-btn-primary" id="drawerBuyBtn">
+                    <span>Купить подарок</span>
+                    <span class="btn-subtitle" id="drawerBuyPrice">0 TON</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer bundle-drawer" id="bundleDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть бандл" class="drawer-close-btn" id="bundleCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row drawer-header-block">
+                <h2 class="drawer-title-left" id="bundleTitle">Бандл • ID 37297</h2>
+                <p class="drawer-subtitle-left drawer-subtitle-muted" id="bundleSubtitle">Подарков: 7</p>
+            </div>
+            <div class="bundle-list" id="bundleItemsList">
+            </div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-secondary" id="bundleCancelBtn">
+                    <span>Закрыть</span>
+                </button>
+                <button class="drawer-btn-primary" id="bundleBuyBtn">
+                    <span>Купить бандл</span>
+                    <span class="btn-subtitle" id="bundleBuyPrice">0 TON</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer drawer-elevated" id="confirmDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть подтверждение" class="drawer-close-btn" id="confirmCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row">
+                <h2 class="drawer-title-left">Купить подарок</h2>
+            </div>
+            <p class="drawer-desc-left">Вы уверены, что хотите купить этот подарок?</p>
+            <div class="confirm-card">
+                <div class="confirm-card-left">
+                    <img alt="Изображение подарка" class="confirm-card-img" id="confirmImage" src="" />
+                    <div class="confirm-card-info">
+                        <div class="confirm-card-name" id="confirmName">Name</div>
+                        <div class="confirm-card-id" id="confirmId">#000</div>
+                    </div>
+                </div>
+                <div class="confirm-card-right">
+                    <div class="confirm-price-block">
+                        <div class="confirm-price-val" id="confirmPriceRight">0 TON</div>
+                        <div class="confirm-price-label">Цена</div>
+                    </div>
+                </div>
+            </div>
+            <div class="confirm-stats">
+                <div class="confirm-stat-row">
+                    <span>Доступный баланс</span>
+                    <div class="confirm-stat-val">
+                        <span id="confirmBalance">0</span> TON
+                    </div>
+                </div>
+            </div>
+            <div class="confirm-status-text" id="confirmStatusText">Недостаточный баланс</div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-secondary" id="confirmCancelBtn">
+                    <span>Закрыть</span>
+                </button>
+                <button class="drawer-btn-primary" id="confirmBuyBtnFinal">
+                    <span>Купить подарок</span>
+                    <span class="btn-subtitle" id="confirmBuyBtnPrice">0 TON</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer drawer-elevated" id="offerDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть оффер" class="drawer-close-btn" id="offerCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row">
+                <h2 class="drawer-title-left">Ваше предложение</h2>
+            </div>
+            <div class="confirm-card">
+                <div class="confirm-card-left">
+                    <img alt="Изображение подарка" class="confirm-card-img" id="offerImage" src="" />
+                    <div class="confirm-card-info">
+                        <div class="confirm-card-name" id="offerName">Name</div>
+                        <div class="confirm-card-id" id="offerId">#000</div>
+                    </div>
+                </div>
+                <div class="confirm-card-right">
+                    <div class="confirm-price-block">
+                        <div class="confirm-price-val" id="offerMinPrice">0 TON</div>
+                        <div class="confirm-price-label">Мин. цена</div>
+                    </div>
+                    <div class="confirm-price-block">
+                        <div class="confirm-price-val" id="offerPriceRight">0 TON</div>
+                        <div class="confirm-price-label">Цена</div>
+                    </div>
+                </div>
+            </div>
+            <div class="offer-expiration-group">
+                <div class="offer-expiration-label">Окончание оффера</div>
+                <div class="offer-toggles">
+                    <button class="offer-toggle active">7 дней</button>
+                    <button class="offer-toggle">Бессрочно</button>
+                </div>
+            </div>
+            <div class="confirm-stats">
+                <div class="confirm-stat-row">
+                    <span>Доступный баланс</span>
+                    <div class="confirm-stat-val">
+                        <span id="offerBalance">0</span> TON
+                    </div>
+                </div>
+            </div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-primary" id="sendOfferBtn">
+                    <span>Отправить оффер</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer drawer-elevated" id="collectionDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть коллекцию" class="drawer-close-btn" id="collectionCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row drawer-header-block">
+                <h2 class="drawer-title-left">Коллекция</h2>
+                <p class="drawer-subtitle-left drawer-subtitle-muted">Выберите
+                    одну
+                    или несколько</p>
+            </div>
+            <div class="collection-search-wrapper">
+                <i class="ri-search-line collection-search-icon"></i>
+                <input class="collection-search-input" id="collectionSearchInput" placeholder="Поиск по коллекции"
+                    type="text" />
+            </div>
+            <div class="collection-list" id="collectionList">
+            </div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-secondary" id="collectionResetBtn">
+                    <span>Сбросить</span>
+                </button>
+                <button class="drawer-btn-primary" id="collectionShowBtn">
+                    <span>Показать</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer drawer-elevated" id="withdrawDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть вывод" class="drawer-close-btn" id="withdrawCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row drawer-header-block">
+                <h2 class="drawer-title-left">Вывод подарков</h2>
+            </div>
+            <div class="collection-list" id="withdrawList"></div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-secondary" id="withdrawResetBtn">
+                    <span>Сбросить</span>
+                </button>
+                <button class="drawer-btn-primary" id="withdrawConfirmBtn">
+                    <span>Вывести</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer drawer-elevated" id="sellDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть продажу" class="drawer-close-btn" id="sellCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row drawer-header-block">
+                <h2 class="drawer-title-left">Продажа подарков</h2>
+            </div>
+            <div class="collection-list" id="sellList"></div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-secondary" id="sellResetBtn">
+                    <span>Сбросить</span>
+                </button>
+                <button class="drawer-btn-primary" id="sellConfirmBtn">
+                    <span>Продать</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer drawer-elevated" id="exchangeStarsDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть обмен" class="drawer-close-btn" id="exchangeStarsCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row drawer-header-block">
+                <h2 class="drawer-title-left">Обмен Stars</h2>
+            </div>
+            <p class="drawer-subtitle-left drawer-subtitle-muted">Курс: 100 Stars = 1 TON</p>
+            <div class="exchange-info">
+                <div class="exchange-row">
+                    <div class="exchange-label">
+                        <svg aria-hidden="true" class="exchange-star-icon" fill="none" height="16" viewBox="0 0 24 24"
+                            width="16" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                                fill="#fbbf24"></path>
+                        </svg>
+                        <span>Доступно</span>
+                    </div>
+                    <span class="exchange-value" id="exchangeStarsAvailable">0 Stars</span>
+                </div>
+                <div class="exchange-row">
+                    <div class="exchange-label">
+                        <svg aria-hidden="true" class="exchange-ton-icon" fill="currentColor" height="16"
+                            viewBox="0 0 13 14" width="16" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10.0758 0.5H1.94269C0.460088 0.5 -0.471834 2.10705 0.248288 3.41806L5.24678 12.0877C5.58566 12.6374 6.3905 12.6374 6.72938 12.0877L11.7279 3.41806C12.4904 2.10705 11.5584 0.5 10.0758 0.5ZM5.28914 9.46564L4.18778 7.3511L1.56145 2.65683C1.39201 2.36079 1.60381 1.98018 1.98505 1.98018H5.28914V9.46564ZM10.4571 2.65683L7.83075 7.3511L6.72938 9.46564V1.98018H10.0335C10.4147 1.98018 10.6265 2.36079 10.4571 2.65683Z">
+                            </path>
+                        </svg>
+                        <span>Получите</span>
+                    </div>
+                    <span class="exchange-value" id="exchangeTonReceive">0 TON</span>
+                </div>
+            </div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-secondary" id="exchangeStarsCancelBtn">
+                    <span>Отмена</span>
+                </button>
+                <button class="drawer-btn-primary" id="exchangeStarsConfirmBtn">
+                    <span>Обменять</span>
+                </button>
+            </div>
+        </div>
+        <div class="drawer drawer-elevated" id="cartDrawer">
+            <div class="drawer-handle"></div>
+            <button aria-label="Закрыть корзину" class="drawer-close-btn" id="cartCloseBtn">
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+            </button>
+            <div class="drawer-header-row">
+                <h2 class="drawer-title-left">Корзина</h2>
+            </div>
+            <div class="cart-items-list" id="cartItemsList">
+            </div>
+            <div class="drawer-actions">
+                <button class="drawer-btn-primary" id="cartPayBtn">
+                    <span>К оплате</span>
+                    <span class="btn-subtitle" id="cartPayAmount">0 TON</span>
+                </button>
+            </div>
+        </div>
+        <div class="popup-overlay" id="errorOverlay"></div>
+        <div class="popup-card" id="errorPopup">
+            <div class="popup-icon-wrapper">
+                <i class="ri-error-warning-fill popup-icon-alert"></i>
+            </div>
+            <h3 class="popup-title" id="errorTitle">Ошибка</h3>
+            <p class="popup-text" id="errorText">Для покупки нужно пройти авторизацию на маркете</p>
+            <button class="popup-btn" id="errorCloseBtn">Закрыть</button>
+        </div>
+        <div class="cart-notification" id="cartNotification">
+            <div class="cart-notification-content">
+                <svg class="cart-notification-icon" fill="none" height="20" viewBox="0 0 16 16" width="20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 2L2 4.5V13C2 13.5523 2.44772 14 3 14H13C13.5523 14 14 13.5523 14 13V4.5L12 2H4Z"
+                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+                    <path d="M2 4.5H14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="1.5"></path>
+                    <path d="M11 8.5C11 9.60457 10.1046 10.5 9 10.5C7.89543 10.5 7 9.60457 7 8.5" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+                </svg>
+                <div class="cart-notification-text">
+                    <div class="cart-notification-price" id="cartNotificationPrice">0 TON</div>
+                    <div class="cart-notification-count" id="cartNotificationCount">0 подарков</div>
+                </div>
+            </div>
+        </div>
+        <div class="withdraw-toast" id="withdrawToast">
+            <div class="withdraw-toast-content">
+                <span class="withdraw-toast-text" id="withdrawToastText">Подарки не выбраны</span>
+                <div class="withdraw-toast-progress">
+                    <div class="withdraw-toast-bar" id="withdrawToastBar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="notifications-container" id="notificationsContainer"></div>
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-view="market">
+                <i class="ri-shopping-bag-3-line nav-icon"></i>
+                <span class="nav-text">Маркет</span>
+            </button>
+            <button class="nav-btn" data-view="my-gifts">
+                <i class="ri-gift-line nav-icon"></i>
+                <span class="nav-text">Мои подарки</span>
+                <span class="nav-badge hidden" id="myGiftsNavBadge">1</span>
+            </button>
+            <button class="nav-btn" data-view="seasons">
+                <i class="ri-star-line nav-icon"></i>
+                <span class="nav-text">Сезоны</span>
+            </button>
+            <button class="nav-btn" data-view="profile">
+                <i class="ri-user-3-line nav-icon"></i>
+                <span class="nav-text">Профиль</span>
+            </button>
+        </nav>
+    </div>
+    <script>
+        // КРИТИЧЕСКИ ВАЖНО: Гарантированное скрытие loader через 2 секунды
+        // Это выполнится ВСЕГДА, даже если другие скрипты не загрузятся
+        setTimeout(function () {
+            console.log('⏰ ПРИНУДИТЕЛЬНОЕ скрытие loader (2 сек)');
+            var loader = document.getElementById('pageLoader');
+            var app = document.getElementById('app');
+
+            if (loader) {
+                loader.style.display = 'none';
+                loader.classList.add('hidden');
+            }
+
+            if (app) {
+                app.style.visibility = 'visible';
+                app.style.opacity = '1';
+            }
+        }, 2000);
+
+        // КРИТИЧЕСКИ ВАЖНО: Проверяем загрузку скриптов
+        console.log('=== НАЧАЛО ЗАГРУЗКИ СКРИПТОВ ===');
+        console.log('1. Inline script выполнен');
+
+        // Проверяем Telegram WebApp API
+        if (!window.Telegram || !window.Telegram.WebApp) {
+            console.error('❌ Telegram WebApp API НЕ ЗАГРУЖЕН!');
+        } else {
+            console.log('✅ Telegram WebApp API загружен');
+        }
+
+        // Проверяем Lottie (уже загружен в head)
+        if (typeof lottie === 'undefined') {
+            console.error('❌ Lottie НЕ ЗАГРУЖЕН!');
+        } else {
+            console.log('✅ Lottie загружен');
+        }
+    </script>
+
+    <!-- Конфигурация и утилиты -->
+    <script src="/market/config.js" onload="console.log('✅ config.js загружен')"
+        onerror="console.error('❌ config.js НЕ загружен')"></script>
+    <script src="/market/api-client.js" onload="console.log('✅ api-client.js загружен')"
+        onerror="console.error('❌ api-client.js НЕ загружен')"></script>
+
+    <!-- КРИТИЧЕСКИ ВАЖНО: nft-data.js ДОЛЖЕН загрузиться ДО script.js и market.js -->
+    <script src="/market/nft-data.js"
+        onload="console.log('✅ nft-data.js загружен (' + (window.NFT_LINKS?.length || 0) + ' подарков)')"
+        onerror="console.error('❌ nft-data.js НЕ загружен')"></script>
+
+    <!-- Основной скрипт инициализации -->
+    <script src="/market/script.js" onload="console.log('✅ script.js загружен')"
+        onerror="console.error('❌ script.js НЕ загружен')"></script>
+
+    <!-- Модули функциональности -->
+    <script src="/market/gift-animations.js" onload="console.log('✅ gift-animations.js загружен')"
+        onerror="console.error('❌ gift-animations.js НЕ загружен')"></script>
+    <script src="/market/gift-manager.js" onload="console.log('✅ gift-manager.js загружен')"
+        onerror="console.error('❌ gift-manager.js НЕ загружен')"></script>
+    <script src="/market/market.js" onload="console.log('✅ market.js загружен')"
+        onerror="console.error('❌ market.js НЕ загружен')"></script>
+    <script src="/market/my-gifts.js" onload="console.log('✅ my-gifts.js загружен')"
+        onerror="console.error('❌ my-gifts.js НЕ загружен')"></script>
+    <script src="/market/seasons.js" onload="console.log('✅ seasons.js загружен')"
+        onerror="console.error('❌ seasons.js НЕ загружен')"></script>
+    <script src="/market/profile.js" onload="console.log('✅ profile.js загружен')"
+        onerror="console.error('❌ profile.js НЕ загружен')"></script>
+    <script src="/market/deposit.js" onload="console.log('✅ deposit.js загружен')"
+        onerror="console.error('❌ deposit.js НЕ загружен')"></script>
+    <script src="/market/cart.js" onload="console.log('✅ cart.js загружен')"
+        onerror="console.error('❌ cart.js НЕ загружен')"></script>
+    <script src="/market/auth.js" onload="console.log('✅ auth.js загружен')"
+        onerror="console.error('❌ auth.js НЕ загружен')"></script>
+    <script src="/market/snow.js" onload="console.log('✅ snow.js загружен')"
+        onerror="console.error('❌ snow.js НЕ загружен')"></script>
+    <script>
+        console.log('=== ВСЕ СКРИПТЫ ПОДКЛЮЧЕНЫ ===');
+        console.log('Проверьте выше, все ли файлы загрузились успешно (✅)');
+        console.log('Если есть ❌ - значит файл не загрузился с сервера');
+
+        // Финальная проверка для диагностики
+        setTimeout(() => {
+            console.log('=== ФИНАЛЬНАЯ ПРОВЕРКА ===');
+            console.log('NFT_LINKS:', window.NFT_LINKS ? window.NFT_LINKS.length + ' подарков' : '❌ НЕ ЗАГРУЖЕН');
+            console.log('NFT_COLLECTION_PRICES:', window.NFT_COLLECTION_PRICES ? Object.keys(window.NFT_COLLECTION_PRICES).length + ' коллекций' : '❌ НЕ ЗАГРУЖЕН');
+            console.log('NFT_NAMES:', window.NFT_NAMES ? Object.keys(window.NFT_NAMES).length + ' названий' : '❌ НЕ ЗАГРУЖЕН');
+            console.log('MarketApp:', window.MarketApp ? '✅ OK' : '❌ НЕ ИНИЦИАЛИЗИРОВАН');
+            console.log('initMarketView:', typeof window.initMarketView);
+
+            const grid = document.getElementById('nftCardsGrid');
+            console.log('Grid найден:', !!grid);
+            console.log('Grid children:', grid ? grid.children.length : 0);
+
+            if (!window.NFT_LINKS || window.NFT_LINKS.length === 0) {
+                console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: NFT_LINKS не загружен!');
+                console.error('Проверьте что файл /market/nft-data.js существует и загружается');
+            }
+
+            if (grid && grid.children.length === 0) {
+                console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: Карточки не отрендерились!');
+                console.error('Проверьте что initMarketView() вызвалась');
+                console.error('Попробуйте вызвать вручную: window.initMarketView()');
+            }
+        }, 2000);
+    </script>
+</body>
+
+</html>
